@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HOSCAD — Hospital CAD & EMS Coordination</title>
+  <meta name="description" content="Real-time EMS coordination for hospital receiving teams. Live unit tracking, interfacility dispatch, and receiving facility coordination built for clinical operations." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0d1117;
+      --bg2:      #161b22;
+      --bg3:      #1c2128;
+      --border:   #30363d;
+      --accent:   #4fa3e0;
+      --accent2:  #22c55e;
+      --text:     #e6edf3;
+      --muted:    #7d8590;
+      --danger:   #f87171;
+      --warn:     #f59e0b;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      line-height: 1.6;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── NAV ── */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 48px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-logo {
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: .08em;
+      color: var(--accent);
+    }
+    .nav-logo span { color: var(--text); }
+    .nav-links { display: flex; gap: 32px; align-items: center; }
+    .nav-links a { color: var(--muted); font-size: 14px; font-weight: 500; }
+    .nav-links a:hover { color: var(--text); text-decoration: none; }
+    .nav-cta {
+      background: var(--accent);
+      color: #000 !important;
+      font-weight: 700;
+      padding: 8px 20px;
+      border-radius: 4px;
+      font-size: 13px;
+    }
+    .nav-cta:hover { background: #5bb5f0; text-decoration: none !important; }
+
+    /* ── HERO ── */
+    .hero {
+      text-align: center;
+      padding: 96px 48px 80px;
+      max-width: 860px;
+      margin: 0 auto;
+    }
+    .hero-eyebrow {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      color: var(--accent);
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: clamp(36px, 5vw, 58px);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -.02em;
+      margin-bottom: 24px;
+    }
+    .hero h1 em { color: var(--accent); font-style: normal; }
+    .hero p {
+      font-size: 18px;
+      color: var(--muted);
+      max-width: 600px;
+      margin: 0 auto 40px;
+      line-height: 1.7;
+    }
+    .hero-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .btn-primary {
+      background: var(--accent);
+      color: #000;
+      font-weight: 700;
+      padding: 14px 32px;
+      border-radius: 6px;
+      font-size: 15px;
+      display: inline-block;
+    }
+    .btn-primary:hover { background: #5bb5f0; text-decoration: none; }
+    .btn-secondary-outline {
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-weight: 600;
+      padding: 14px 32px;
+      border-radius: 6px;
+      font-size: 15px;
+      display: inline-block;
+    }
+    .btn-secondary-outline:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+
+    /* ── LIVE BADGE ── */
+    .live-strip {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 32px;
+      max-width: 720px;
+      margin: 0 auto 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      flex-wrap: wrap;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .live-dot {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+      color: var(--accent2);
+    }
+    .live-dot::before {
+      content: '';
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--accent2);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* ── FEATURES ── */
+    section { padding: 80px 48px; }
+    .section-label {
+      text-align: center;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .12em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 48px;
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+    .feature-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 28px;
+    }
+    .feature-card:hover { border-color: #3a4a5a; }
+    .feature-icon {
+      font-size: 28px;
+      margin-bottom: 14px;
+      display: block;
+    }
+    .feature-card h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    .feature-card p { font-size: 14px; color: var(--muted); line-height: 1.6; }
+
+    /* ── WHO ── */
+    .who-section {
+      background: var(--bg2);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+    .who-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+    .who-inner h2 {
+      font-size: 32px;
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
+    .who-inner h2 em { color: var(--accent); font-style: normal; }
+    .who-inner p { color: var(--muted); font-size: 15px; margin-bottom: 16px; }
+    .who-list { list-style: none; display: flex; flex-direction: column; gap: 12px; }
+    .who-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+    .who-list li::before {
+      content: '✓';
+      color: var(--accent2);
+      font-weight: 900;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+    .stat-box {
+      background: var(--bg3);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+      text-align: center;
+    }
+    .stat-box .num {
+      font-size: 36px;
+      font-weight: 900;
+      color: var(--accent);
+      display: block;
+    }
+    .stat-box .lbl {
+      font-size: 12px;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      margin-top: 4px;
+    }
+
+    /* ── INTEGRATIONS ── */
+    .integrations-row {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .int-chip {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 8px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+    }
+
+    /* ── CTA BAND ── */
+    .cta-band {
+      text-align: center;
+      padding: 96px 48px;
+      background: linear-gradient(180deg, var(--bg) 0%, var(--bg2) 100%);
+      border-top: 1px solid var(--border);
+    }
+    .cta-band h2 {
+      font-size: clamp(28px, 4vw, 44px);
+      font-weight: 900;
+      margin-bottom: 16px;
+    }
+    .cta-band p { color: var(--muted); font-size: 16px; margin-bottom: 36px; }
+    .contact-email {
+      font-size: 16px;
+      color: var(--accent);
+      display: block;
+      margin-top: 24px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 48px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: var(--muted);
+      font-size: 13px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .footer-logo {
+      font-weight: 900;
+      letter-spacing: .08em;
+      color: var(--accent);
+    }
+
+    @media (max-width: 700px) {
+      nav { padding: 14px 20px; }
+      .nav-links a:not(.nav-cta) { display: none; }
+      section { padding: 60px 20px; }
+      .hero { padding: 64px 20px 48px; }
+      .who-inner { grid-template-columns: 1fr; gap: 40px; }
+      footer { padding: 24px 20px; flex-direction: column; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">HOS<span>CAD</span></div>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#integrations">Integrations</a>
+    <a href="mailto:christian@holdenportal.com">Contact</a>
+    <a href="https://scmc.hoscad.net" class="nav-cta">Client Login</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-eyebrow">Hospital CAD &amp; EMS Coordination</div>
+  <h1>Real-time coordination for<br><em>EMS receiving teams</em></h1>
+  <p>HOSCAD gives hospital EMS coordinators and dispatchers a live board — unit status, interfacility transports, mutual aid, and destination diversion, all in one place.</p>
+  <div class="hero-actions">
+    <a href="mailto:christian@holdenportal.com?subject=HOSCAD Demo Request" class="btn-primary">Request a Demo</a>
+    <a href="#features" class="btn-secondary-outline">See Features</a>
+  </div>
+</div>
+
+<!-- LIVE STRIP -->
+<div class="live-strip">
+  <span class="live-dot">Live at St. Charles Medical Center, Bend OR</span>
+  <span>60+ units tracked</span>
+  <span>24 agencies</span>
+  <span>Field MDT app included</span>
+</div>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-label">What HOSCAD does</div>
+  <div class="features-grid">
+    <div class="feature-card">
+      <span class="feature-icon">📡</span>
+      <h3>Live Unit Board</h3>
+      <p>Every unit's status in real time — dispatched, en route, on scene, transporting, at hospital. Color-coded, sortable, searchable. Updates every 10 seconds.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🚑</span>
+      <h3>Interfacility Dispatch</h3>
+      <p>Full transport lifecycle from dispatch through handoff. Six milestone timestamps per call. Clinical type codes for CCT, IFT-ALS, IFT-BLS, discharge, dialysis, and more.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">📱</span>
+      <h3>Field MDT App</h3>
+      <p>Crews log on from any phone or tablet. Status updates, destination selection, patient count, GPS tracking. Works offline. iOS and Android.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🏥</span>
+      <h3>Diversion & Destinations</h3>
+      <p>One-command diversion toggle per facility. Board and field app reflect diversion status instantly. Viewer mode for receiving facility staff.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🤝</span>
+      <h3>Mutual Aid Coordination</h3>
+      <p>Request, acknowledge, and release mutual aid from partner agencies directly from the board. Full audit trail. Automatic broadcast to dispatchers.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">✈️</span>
+      <h3>Air Resource Tracking</h3>
+      <p>Live ADS-B telemetry for air medical helicopters and fixed-wing aircraft. Inbound alerts, altitude, speed, and heading on the board map.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🗺️</span>
+      <h3>Live Map</h3>
+      <p>Unit positions, incident scenes, hospital helipads, and aircraft on one map. Geocoding via OpenStreetMap. LOC command to set unit positions manually.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">📊</span>
+      <h3>Shift Reports & KPIs</h3>
+      <p>Per-shift and per-unit call reports exportable to Excel. Response time analysis, unit utilization, call type distribution. No third-party BI tools needed.</p>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🔒</span>
+      <h3>Secure by Design</h3>
+      <p>Role-based access for dispatchers, supervisors, managers, and field crews. SHA-256 session auth, brute-force protection, full audit trail on every state change.</p>
+    </div>
+  </div>
+</section>
+
+<!-- WHO -->
+<section class="who-section" id="who">
+  <div class="who-inner">
+    <div>
+      <h2>Built for <em>hospital EMS teams</em> — not 911 centers</h2>
+      <p>Most CAD software is built for 911 dispatch centers. HOSCAD is purpose-built for the receiving side — the EMS coordinators, transport dispatchers, and charge nurses who manage incoming units at hospitals and health systems.</p>
+      <ul class="who-list">
+        <li>Hospital EMS transport coordinators</li>
+        <li>Interfacility transport dispatchers (CCT, IFT)</li>
+        <li>Emergency department charge nurses</li>
+        <li>EMS supervisors and managers</li>
+        <li>Multi-agency EMS coordinators</li>
+      </ul>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-box">
+        <span class="num">60+</span>
+        <span class="lbl">Units tracked</span>
+      </div>
+      <div class="stat-box">
+        <span class="num">24</span>
+        <span class="lbl">Agencies supported</span>
+      </div>
+      <div class="stat-box">
+        <span class="num">6</span>
+        <span class="lbl">Transport milestones</span>
+      </div>
+      <div class="stat-box">
+        <span class="num">$0</span>
+        <span class="lbl">Infrastructure cost</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INTEGRATIONS -->
+<section id="integrations">
+  <div class="section-label">Integrations</div>
+  <div style="text-align:center;margin-bottom:32px;">
+    <p style="color:var(--muted);font-size:15px;max-width:560px;margin:0 auto;">Connects to the data feeds your team already depends on — no proprietary middleware required.</p>
+  </div>
+  <div class="integrations-row">
+    <span class="int-chip">PulsePoint (11 agencies)</span>
+    <span class="int-chip">ADS-B Live Aircraft</span>
+    <span class="int-chip">Deschutes County 911</span>
+    <span class="int-chip">OpenStreetMap / Nominatim</span>
+    <span class="int-chip">LifeFlight Network</span>
+    <span class="int-chip">Oregon Capacity System</span>
+    <span class="int-chip">Tyler CAD (CadView)</span>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-band">
+  <h2>Ready to see HOSCAD in action?</h2>
+  <p>We offer demos with live data from St. Charles Medical Center. No sales pitch — just the board working.</p>
+  <a href="mailto:christian@holdenportal.com?subject=HOSCAD Demo Request" class="btn-primary">Request a Demo</a>
+  <a href="mailto:christian@holdenportal.com" class="contact-email">christian@holdenportal.com</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <span class="footer-logo">HOSCAD</span>
+  <span>Hospital CAD &amp; EMS Coordination System</span>
+  <span>&copy; 2026 HOSCAD. All rights reserved.</span>
+</footer>
+
+</body>
+</html>
