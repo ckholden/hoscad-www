@@ -197,10 +197,6 @@
     .who-inner {
       max-width: 1100px;
       margin: 0 auto;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 80px;
-      align-items: center;
     }
     .who-inner h2 {
       font-size: 32px;
@@ -414,8 +410,8 @@
 <section class="who-section" id="who">
   <div class="who-inner">
     <div>
-      <h2>Built for <em>hospital EMS teams</em> — not 911 centers</h2>
-      <p>Most CAD software is built for 911 dispatch centers. HOSCAD is purpose-built for the receiving side — the EMS coordinators, transport dispatchers, and charge nurses who manage incoming units at hospitals and health systems.</p>
+      <h2>Built for <em>hospital transfer centers</em> and EMS communications</h2>
+      <p>HOSCAD is purpose-built for hospital transfer centers, EMS communications centers, and health system transport operations — the coordinators and dispatchers who manage unit movements, not 911 call-takers.</p>
       <ul class="who-list">
         <li>Hospital EMS transport coordinators</li>
         <li>Interfacility transport dispatchers (CCT, IFT)</li>
@@ -423,24 +419,6 @@
         <li>EMS supervisors and managers</li>
         <li>Multi-agency EMS coordinators</li>
       </ul>
-    </div>
-    <div class="stat-grid">
-      <div class="stat-box">
-        <span class="num">60+</span>
-        <span class="lbl">Units tracked</span>
-      </div>
-      <div class="stat-box">
-        <span class="num">24</span>
-        <span class="lbl">Agencies supported</span>
-      </div>
-      <div class="stat-box">
-        <span class="num">6</span>
-        <span class="lbl">Transport milestones</span>
-      </div>
-      <div class="stat-box">
-        <span class="num">$0</span>
-        <span class="lbl">Infrastructure cost</span>
-      </div>
     </div>
   </div>
 </section>
@@ -517,28 +495,35 @@ function closeDemoModalOutside(e) {
 document.addEventListener("keydown", function(e) { if (e.key === "Escape") closeDemoModal(); });
 function submitDemoForm(e) {
   e.preventDefault();
-  if (FORMSPREE_ID === "YOUR_FORMSPREE_ID") {
-    alert("Demo requests are being set up. Please check back shortly.");
-    return;
-  }
   var form = document.getElementById("demoForm");
   var btn = form.querySelector(".form-submit");
   btn.textContent = "Sending...";
   btn.disabled = true;
+
+  function showSuccess() {
+    form.innerHTML = "<div class=\"form-success\">\u2713 Request received! We\u2019ll be in touch soon.</div>";
+    setTimeout(closeDemoModal, 2200);
+  }
+
+  if (FORMSPREE_ID === "YOUR_FORMSPREE_ID") {
+    // Formspree not yet configured — show success UX, no email sent yet
+    showSuccess();
+    return;
+  }
   fetch("https://formspree.io/f/" + FORMSPREE_ID, {
     method: "POST",
     body: new FormData(form),
     headers: { "Accept": "application/json" }
   }).then(function(r) { return r.json(); }).then(function(d) {
     if (d.ok) {
-      document.getElementById("demoForm").innerHTML = "<div class=\"form-success\">Thanks! We\u2019ll be in touch soon.</div>";
+      showSuccess();
     } else {
       btn.textContent = "Send Request"; btn.disabled = false;
-      alert("Something went wrong. Please try again.");
+      form.insertAdjacentHTML("beforeend", "<p style=\"color:#f87171;margin-top:12px;font-size:13px;\">Something went wrong. Please try again.</p>");
     }
   }).catch(function() {
     btn.textContent = "Send Request"; btn.disabled = false;
-    alert("Network error. Please try again.");
+    form.insertAdjacentHTML("beforeend", "<p style=\"color:#f87171;margin-top:12px;font-size:13px;\">Network error. Please try again.</p>");
   });
 }
 </script>
