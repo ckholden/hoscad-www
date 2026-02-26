@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>HOSCAD — Hospital CAD & EMS Coordination</title>
   <meta name="description" content="Real-time EMS coordination for hospital receiving teams. Live unit tracking, interfacility dispatch, and receiving facility coordination built for clinical operations." />
+  <link rel="icon" type="image/png" href="logo.png" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -44,12 +45,15 @@
       z-index: 100;
     }
     .nav-logo {
-      font-size: 20px;
-      font-weight: 900;
-      letter-spacing: .08em;
-      color: var(--accent);
+      display: flex;
+      align-items: center;
     }
-    .nav-logo span { color: var(--text); }
+    .nav-logo-img {
+      height: 36px;
+      width: auto;
+      mix-blend-mode: screen;
+      display: block;
+    }
     .nav-links { display: flex; gap: 32px; align-items: center; }
     .nav-links a { color: var(--muted); font-size: 14px; font-weight: 500; }
     .nav-links a:hover { color: var(--text); text-decoration: none; }
@@ -335,7 +339,7 @@
 
 <!-- NAV -->
 <nav>
-  <div class="nav-logo">HOS<span>CAD</span></div>
+  <div class="nav-logo"><img src="logo.png" alt="HOSCAD" class="nav-logo-img" /></div>
   <div class="nav-links">
     <a href="#features">Features</a>
     <a href="#" onclick="openDemoModal();return false;">Contact</a>
